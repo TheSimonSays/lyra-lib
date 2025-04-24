@@ -4,7 +4,24 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-#include "lyra.h"
+
+
+typedef struct {
+    PyObject *key;
+    PyObject *value;
+    int occupied;
+    int deleted;
+} HashEntry;
+
+typedef struct {
+    PyObject_HEAD
+    HashEntry *table;
+    Py_ssize_t size;
+    Py_ssize_t used;
+    Py_ssize_t fill;
+} LyraObject;
+
+static int dictresize(LyraObject *mp, Py_ssize_t minsize);
 
 static uint64_t fnv1a_hash(const char *str, size_t len) {
     uint64_t hash = 14695981039346656037ULL; // FNV offset basis kek
